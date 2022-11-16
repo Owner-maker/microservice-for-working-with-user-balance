@@ -4,9 +4,10 @@ import (
 	"time"
 )
 
-type SelfIncome struct {
+type UsersTransfer struct {
 	ID              uint      `json:"id" gorm:"primary_key"`
-	UserID          uint      `json:"user_id"`
+	UserSenderID    uint      `json:"user_sender_id"`
+	UserGetterID    uint      `json:"user_getter_id"`
 	IncomingBalance uint      `json:"incoming_balance"`
 	OutgoingBalance uint      `json:"outgoing_balance"`
 	Timestamp       time.Time `json:"timestamp"`

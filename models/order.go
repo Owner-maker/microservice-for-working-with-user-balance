@@ -4,11 +4,11 @@ import (
 	"time"
 )
 
-type SelfIncome struct {
+type Order struct {
 	ID              uint      `json:"id" gorm:"primary_key"`
 	UserID          uint      `json:"user_id"`
 	IncomingBalance uint      `json:"incoming_balance"`
 	OutgoingBalance uint      `json:"outgoing_balance"`
 	Timestamp       time.Time `json:"timestamp"`
-	MoneyValue      uint      `json:"money_value"`
+	IsCompleted     bool      `json:"is_completed" gorm:"default:false"`
 }
