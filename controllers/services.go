@@ -13,7 +13,7 @@ type ReserveMoneyForServiceInput struct {
 	Price     uint `json:"price" binding:"required"`
 }
 
-type PerformServiceInput struct {
+type HandleServiceInput struct {
 	UserID    uint `json:"user_id" binding:"required"`
 	ServiceID uint `json:"service_id" binding:"required"`
 	OrderID   uint `json:"order_id" binding:"required"`
@@ -35,8 +35,6 @@ func CreateOrder(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "User does not have enough money to buy the service"})
 		return
 	}
-	balance.Value -= input.Price
-	models.DB.Model(&balance).Update(&balance)
 	order := models.Order{
 		UserID:          input.UserID,
 		ServiceID:       input.ServiceID,
@@ -44,12 +42,14 @@ func CreateOrder(context *gin.Context) {
 		OutgoingBalance: balance.Value - input.Price,
 		Price:           input.Price,
 	}
+	balance.Value -= input.Price
+	models.DB.Model(&balance).Update(&balance)
 	models.DB.Create(&order)
 	context.JSON(http.StatusOK, gin.H{"order_id": order.ID, "balance": balance.Value})
 }
 
 func PerformService(context *gin.Context) {
-	var input PerformServiceInput
+	var input HandleServiceInput
 	var order models.Order
 	if err := context.ShouldBindJSON(&input); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -60,7 +60,7 @@ func PerformService(context *gin.Context) {
 		return
 	}
 	if err := models.DB.Where("id = ?", input.OrderID).First(&order).Error; err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
+		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such order"})
 		return
 	}
 	if input.ServiceID != order.ServiceID {
@@ -74,5 +74,34 @@ func PerformService(context *gin.Context) {
 	order.Timestamp = time.Now()
 	order.IsCompleted = true
 	models.DB.Model(&order).Update(&order)
-	context.JSON(http.StatusOK, gin.H{})
+	context.Status(200)
+}
+func CancelService(context *gin.Context) {
+	var input HandleServiceInput
+	var order models.Order
+	var balance models.Balance
+	if err := context.ShouldBindJSON(&input); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := models.DB.Where("id = ?", input.UserID).Error; err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
+		return
+	}
+	if err := models.DB.Where("id = ?", input.OrderID).First(&order).Error; err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such order"})
+		return
+	}
+	if input.ServiceID != order.ServiceID {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such service id with this order id"})
+		return
+	}
+	models.DB.Where("user_id = ?", input.UserID).First(&balance)
+	order.IncomingBalance = balance.Value
+	order.OutgoingBalance = order.IncomingBalance + order.Price
+	order.Timestamp = time.Now()
+	balance.Value += order.Price
+	models.DB.Model(&balance).Update(&balance)
+	models.DB.Model(&order).Update(&order)
+	context.Status(200)
 }

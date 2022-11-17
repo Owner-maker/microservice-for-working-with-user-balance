@@ -18,6 +18,7 @@ func main() {
 	route.PATCH("/users/transfer", controllers.AccomplishUsersTransfer)
 	route.POST("/user/buy/service", controllers.CreateOrder)
 	route.PATCH("/user/perform/service", controllers.PerformService)
+	route.PATCH("/user/cancel/service", controllers.CancelService)
 
 	err := route.Run()
 	if err != nil {
