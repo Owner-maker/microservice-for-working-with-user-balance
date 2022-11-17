@@ -18,7 +18,6 @@ func ConnectDB() {
 	db.AutoMigrate(&SelfIncome{})
 	db.AutoMigrate(&UsersTransfer{})
 	db.AutoMigrate(&Order{})
-	db.AutoMigrate(&Service{})
 
 	DB = db
 }
