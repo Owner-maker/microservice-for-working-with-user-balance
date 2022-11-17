@@ -10,11 +10,12 @@ func main() {
 	route := gin.Default()
 
 	models.ConnectDB()
-	//models.FillDbWithData()
+	models.FillDbWithData()
 
 	route.GET("/users", controllers.GetUsers)
 	route.GET("/user/balance", controllers.GetUserBalance)
 	route.PATCH("/user/balance/topup", controllers.UpdateUserBalance)
+	route.PATCH("/users/transfer", controllers.AccomplishUsersTransfer)
 
 	err := route.Run()
 	if err != nil {

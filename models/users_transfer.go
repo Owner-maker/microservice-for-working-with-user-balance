@@ -6,8 +6,8 @@ import (
 
 type UsersTransfer struct {
 	ID              uint      `json:"id" gorm:"primary_key"`
-	UserSenderID    uint      `json:"user_sender_id"`
-	UserGetterID    uint      `json:"user_getter_id"`
+	UserID          uint      `json:"user_id"`
+	AnotherUserID   uint      `json:"another_user_id"`
 	IncomingBalance uint      `json:"incoming_balance"`
 	OutgoingBalance uint      `json:"outgoing_balance"`
 	Timestamp       time.Time `json:"timestamp"`
