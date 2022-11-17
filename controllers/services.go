@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"time"
+	"userBalanceServicegot/config"
 	"userBalanceServicegot/models"
 )
 
@@ -26,11 +27,11 @@ func CreateOrder(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.UserID).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.UserID).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
 		return
 	}
-	models.DB.Where("user_id = ?", input.UserID).First(&balance)
+	config.DB.Where("user_id = ?", input.UserID).First(&balance)
 	if balance.Value-input.Price < 0 {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "User does not have enough money to buy the service"})
 		return
@@ -43,8 +44,8 @@ func CreateOrder(context *gin.Context) {
 		Price:           input.Price,
 	}
 	balance.Value -= input.Price
-	models.DB.Model(&balance).Update(&balance)
-	models.DB.Create(&order)
+	config.DB.Model(&balance).Update(&balance)
+	config.DB.Create(&order)
 	context.JSON(http.StatusOK, gin.H{"order_id": order.ID, "balance": balance.Value})
 }
 
@@ -55,11 +56,11 @@ func PerformService(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.UserID).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.UserID).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.OrderID).First(&order).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.OrderID).First(&order).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such order"})
 		return
 	}
@@ -73,7 +74,7 @@ func PerformService(context *gin.Context) {
 	}
 	order.Timestamp = time.Now()
 	order.IsCompleted = true
-	models.DB.Model(&order).Update(&order)
+	config.DB.Model(&order).Update(&order)
 	context.Status(200)
 }
 func CancelService(context *gin.Context) {
@@ -84,11 +85,11 @@ func CancelService(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.UserID).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.UserID).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.OrderID).First(&order).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.OrderID).First(&order).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such order"})
 		return
 	}
@@ -96,12 +97,12 @@ func CancelService(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such service id with this order id"})
 		return
 	}
-	models.DB.Where("user_id = ?", input.UserID).First(&balance)
+	config.DB.Where("user_id = ?", input.UserID).First(&balance)
 	order.IncomingBalance = balance.Value
 	order.OutgoingBalance = order.IncomingBalance + order.Price
 	order.Timestamp = time.Now()
 	balance.Value += order.Price
-	models.DB.Model(&balance).Update(&balance)
-	models.DB.Model(&order).Update(&order)
+	config.DB.Model(&balance).Update(&balance)
+	config.DB.Model(&order).Update(&order)
 	context.Status(200)
 }

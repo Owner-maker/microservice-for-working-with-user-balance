@@ -5,6 +5,7 @@ import (
 	"math"
 	"net/http"
 	"time"
+	"userBalanceServicegot/config"
 	"userBalanceServicegot/models"
 )
 
@@ -25,7 +26,7 @@ type UserTransferInput struct {
 
 func GetUsers(context *gin.Context) {
 	var users []models.User
-	models.DB.Find(&users)
+	config.DB.Find(&users)
 	//models.DB.Preload("SelfIncomes").Find(&users)
 	//models.DB.Preload("Balance").Find(&users)
 	context.JSON(http.StatusOK, gin.H{"users": users})
@@ -39,11 +40,11 @@ func GetUserBalance(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.ID).First(&user).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.ID).First(&user).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
 		return
 	}
-	if err := models.DB.Where("user_id = ?", input.ID).First(&balance).Error; err != nil {
+	if err := config.DB.Where("user_id = ?", input.ID).First(&balance).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "user has not a balance yet"})
 		return
 	}
@@ -62,17 +63,17 @@ func UpdateUserBalance(context *gin.Context) {
 		return
 	}
 	user := models.User{ID: input.ID}
-	if err := models.DB.Where("id = ?", input.ID).First(&user).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.ID).First(&user).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	} else {
 		newBalance := models.Balance{UserID: input.ID, Value: 0}
-		models.DB.Create(&newBalance)
+		config.DB.Create(&newBalance)
 	}
 	CreateSelfIncomeTransaction(input)
-	models.DB.Where("user_id = ?", input.ID).First(&balance)
+	config.DB.Where("user_id = ?", input.ID).First(&balance)
 	balance.Value += uint(input.Value)
-	models.DB.Model(&balance).Update(&balance)
+	config.DB.Model(&balance).Update(&balance)
 	context.JSON(http.StatusOK, gin.H{"balance": balance})
 }
 
@@ -84,24 +85,24 @@ func AccomplishUsersTransfer(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.UserSenderID).First(&userSender).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.UserSenderID).First(&userSender).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := models.DB.Where("id = ?", input.UserGetterID).First(&userGetter).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.UserGetterID).First(&userGetter).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	models.DB.Preload("Balance").Find(&userSender)
+	config.DB.Preload("Balance").Find(&userSender)
 	if userSender.Balance.Value-input.Value < 0 {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "User sender does not have enough money to make transfer"})
 		return
 	}
-	models.DB.Preload("Balance").Find(&userGetter)
+	config.DB.Preload("Balance").Find(&userGetter)
 	userSender.Balance.Value -= input.Value
 	userGetter.Balance.Value += input.Value
-	models.DB.Model(&userSender.Balance).Update(&userSender.Balance)
-	models.DB.Model(&userGetter.Balance).Update(&userGetter.Balance)
+	config.DB.Model(&userSender.Balance).Update(&userSender.Balance)
+	config.DB.Model(&userGetter.Balance).Update(&userGetter.Balance)
 
 	CreateUserTransferTransaction(userSender.Balance, userGetter.ID, -int(input.Value))
 	CreateUserTransferTransaction(userGetter.Balance, userSender.ID, int(input.Value))
@@ -110,7 +111,7 @@ func AccomplishUsersTransfer(context *gin.Context) {
 
 func CreateSelfIncomeTransaction(updateInput UpdateUserBalanceInput) {
 	var currentBalance models.Balance
-	models.DB.Where("user_id = ?", updateInput.ID).First(&currentBalance)
+	config.DB.Where("user_id = ?", updateInput.ID).First(&currentBalance)
 
 	income := models.SelfIncome{
 		UserID:          updateInput.ID,
@@ -120,7 +121,7 @@ func CreateSelfIncomeTransaction(updateInput UpdateUserBalanceInput) {
 		MoneyValue:      uint(updateInput.Value),
 	}
 
-	models.DB.Create(&income)
+	config.DB.Create(&income)
 }
 
 func CreateUserTransferTransaction(userBalance models.Balance, anotherUserID uint, value int) {
@@ -133,5 +134,5 @@ func CreateUserTransferTransaction(userBalance models.Balance, anotherUserID uin
 		MoneyValue:      uint(math.Abs(float64(value))),
 	}
 
-	models.DB.Create(&transfer)
+	config.DB.Create(&transfer)
 }

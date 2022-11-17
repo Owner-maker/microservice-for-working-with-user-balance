@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"userBalanceServicegot/config"
 	"userBalanceServicegot/controllers"
 	"userBalanceServicegot/models"
 )
@@ -9,7 +10,7 @@ import (
 func main() {
 	route := gin.Default()
 
-	models.ConnectDB()
+	config.ConnectDB()
 	models.FillDbWithData()
 
 	route.GET("/users", controllers.GetUsers)
