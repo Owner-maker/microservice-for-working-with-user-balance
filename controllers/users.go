@@ -7,6 +7,10 @@ import (
 	"math"
 	"net/http"
 	"time"
+
+	_ "github.com/Owner-maker/microservice-for-working-with-user-balance/docs"
+	_ "github.com/swaggo/files"
+	_ "github.com/swaggo/gin-swagger"
 )
 
 type BalanceInfoOutput struct {
