@@ -8,10 +8,10 @@ import (
 )
 
 type UserTransactionsInput struct {
-	UserID uint   `json:"user_id"`
-	Limit  uint   `json:"limit"`
-	Page   uint   `json:"page"`
-	Sort   string `json:"sort"`
+	UserID uint   `json:"user_id" binding:"required"`
+	Limit  uint   `json:"limit" binding:"required"`
+	Page   uint   `json:"page" binding:"required"`
+	Sort   string `json:"sort" binding:"required"`
 }
 
 func GetPaginatedUsersTransactions(context *gin.Context) {

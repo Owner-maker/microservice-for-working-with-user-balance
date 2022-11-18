@@ -21,6 +21,8 @@ func main() {
 	route.PATCH("/user/perform/service", controllers.PerformService)
 	route.PATCH("/user/cancel/service", controllers.CancelService)
 	route.GET("/user/transactions", controllers.GetPaginatedUsersTransactions)
+	route.GET("/services/report", controllers.UpdateServicesReport)
+	route.GET("/static/services", controllers.GetServicesReport)
 
 	err := route.Run()
 	if err != nil {
