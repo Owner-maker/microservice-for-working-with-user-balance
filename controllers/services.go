@@ -43,6 +43,7 @@ func CreateOrder(context *gin.Context) {
 		OutgoingBalance: balance.Value - input.Price,
 		Price:           input.Price,
 	}
+
 	balance.Value -= input.Price
 	config.DB.Model(&balance).Update(&balance)
 	config.DB.Create(&order)

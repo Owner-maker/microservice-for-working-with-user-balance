@@ -13,6 +13,10 @@ type GetUserBalanceInput struct {
 	ID uint `json:"id" binding:"required"`
 }
 
+type GetUserInput struct {
+	ID uint `json:"id" binding:"required"`
+}
+
 type UpdateUserBalanceInput struct {
 	ID    uint `json:"id" binding:"required"`
 	Value int  `json:"value" binding:"required"`
@@ -27,9 +31,28 @@ type UserTransferInput struct {
 func GetUsers(context *gin.Context) {
 	var users []models.User
 	config.DB.Find(&users)
-	//models.DB.Preload("SelfIncomes").Find(&users)
-	//models.DB.Preload("Balance").Find(&users)
+	config.DB.Preload("SelfIncomes").Find(&users)
+	config.DB.Preload("Orders").Find(&users)
+	//config.DB.Preload("Balance").Find(&users)
 	context.JSON(http.StatusOK, gin.H{"users": users})
+}
+
+func GetUser(context *gin.Context) {
+	var user models.User
+	var input GetUserInput
+	if err := context.ShouldBindJSON(&input); err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	if err := config.DB.Where("id = ?", input.ID).First(&user).Error; err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
+		return
+	}
+	config.DB.Preload("SelfIncomes").Find(&user)
+	config.DB.Preload("Orders").Find(&user)
+	config.DB.Preload("UsersTransfer").Find(&user)
+	//config.DB.Preload("Balance").Find(&users)
+	context.JSON(http.StatusOK, gin.H{"user": user})
 }
 
 func GetUserBalance(context *gin.Context) {
