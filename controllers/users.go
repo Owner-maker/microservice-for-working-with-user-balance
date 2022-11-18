@@ -9,6 +9,10 @@ import (
 	"time"
 )
 
+type BalanceInfoOutput struct {
+	Balance uint `json:"balance"`
+}
+
 type GetUserBalanceInput struct {
 	ID uint `json:"id" binding:"required"`
 }
@@ -53,6 +57,16 @@ func GetUser(context *gin.Context) {
 	//config.DB.Preload("Balance").Find(&users)
 	context.JSON(http.StatusOK, gin.H{"user": user})
 }
+
+// @Summary GetUserBalance
+// @Description Method allows you to get user's balance value via id
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param input body GetUserBalanceInput true "User's balance info"
+// @Success {object} BalanceInfoOutput
+// @Failure default {object} gin.H
+// @Router /user/balance [get]
 
 func GetUserBalance(context *gin.Context) {
 	var user models.User
