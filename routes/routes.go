@@ -2,6 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"userBalanceServicegot/controllers"
 )
 
@@ -16,4 +18,5 @@ func CreateEndpoints(route *gin.Engine) {
 	route.GET("/user/transactions", controllers.GetPaginatedUsersTransactions)
 	route.GET("/services/report", controllers.UpdateServicesReport)
 	route.GET("/static/services", controllers.GetServicesReport)
+	route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

@@ -9,10 +9,10 @@ import (
 
 const (
 	selfIncomeDescription                    string = "replenishment of the balance"
-	transferToUserDescription                string = "replenishment of balance to user "
-	selfIncomeFromUserDescription            string = "replenishment of the balance from the user "
-	paymentOfServiceDescription              string = "payment of service "
-	selfIncomeWhenServiceCanceledDescription string = "replenishment of the balance when canceling the service "
+	transferToUserDescription                string = "replenishment of balance to user"
+	selfIncomeFromUserDescription            string = "replenishment of the balance from the user"
+	paymentOfServiceDescription              string = "payment of service"
+	selfIncomeWhenServiceCanceledDescription string = "replenishment of the balance when canceling the service"
 )
 
 type Pagination struct {
@@ -64,11 +64,11 @@ func GetPaginatedUserTransactions(userID uint, pagination Pagination) (*[]UserFo
 			MoneyValue:      v.MoneyValue,
 		}
 		if v.AnotherUserID != 0 {
-			user := GetUser(v.UserID)
+			anotherUser := GetUser(v.AnotherUserID)
 			if v.IncomingBalance < v.OutgoingBalance {
-				description = fmt.Sprintf("%s %s", selfIncomeFromUserDescription, user.Name)
+				description = fmt.Sprintf("%s %s", selfIncomeFromUserDescription, anotherUser.Nickname)
 			} else if v.IncomingBalance > v.OutgoingBalance {
-				description = fmt.Sprintf("%s %s", transferToUserDescription, user.Name)
+				description = fmt.Sprintf("%s %s", transferToUserDescription, anotherUser.Nickname)
 			}
 		} else if v.ServiceID != 0 {
 			if v.IsCompleted == true {

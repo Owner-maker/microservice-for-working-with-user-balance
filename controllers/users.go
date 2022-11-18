@@ -33,7 +33,6 @@ func GetUsers(context *gin.Context) {
 	config.DB.Find(&users)
 	config.DB.Preload("SelfIncomes").Find(&users)
 	config.DB.Preload("Orders").Find(&users)
-	//config.DB.Preload("Balance").Find(&users)
 	context.JSON(http.StatusOK, gin.H{"users": users})
 }
 
@@ -97,7 +96,7 @@ func UpdateUserBalance(context *gin.Context) {
 	config.DB.Where("user_id = ?", input.ID).First(&balance)
 	balance.Value += uint(input.Value)
 	config.DB.Model(&balance).Update(&balance)
-	context.JSON(http.StatusOK, gin.H{"balance": balance})
+	context.JSON(http.StatusOK, gin.H{"balance": balance.Value})
 }
 
 func AccomplishUsersTransfer(context *gin.Context) {
