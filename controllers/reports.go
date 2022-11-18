@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
-	"microservice-for-working-with-user-balance/utils"
 	"net/http"
 	"os"
 )

@@ -1,8 +1,8 @@
 package utils
 
 import (
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/config"
 	"github.com/gocarina/gocsv"
-	"microservice-for-working-with-user-balance/config"
 	"os"
 	"strconv"
 )

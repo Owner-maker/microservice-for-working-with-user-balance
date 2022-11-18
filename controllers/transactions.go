@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/config"
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/utils"
 	"github.com/gin-gonic/gin"
-	"microservice-for-working-with-user-balance/config"
-	"microservice-for-working-with-user-balance/utils"
 	"net/http"
 )
 

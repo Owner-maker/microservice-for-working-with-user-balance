@@ -1,10 +1,10 @@
 package routes
 
 import (
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/controllers"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"microservice-for-working-with-user-balance/controllers"
 )
 
 func CreateEndpoints(route *gin.Engine) {

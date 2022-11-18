@@ -1,7 +1,7 @@
 package config
 
 import (
-	"microservice-for-working-with-user-balance/models"
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/models"
 )
 
 func FillDbWithData() {

@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"microservice-for-working-with-user-balance/models"
 )
 
 var DB *gorm.DB

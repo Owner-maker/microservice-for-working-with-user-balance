@@ -1,4 +1,4 @@
-module microservice-for-working-with-user-balance
+module github.com/Owner-maker/microservice-for-working-with-user-balance
 
 go 1.19
 

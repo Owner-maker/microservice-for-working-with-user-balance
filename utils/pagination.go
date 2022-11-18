@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"microservice-for-working-with-user-balance/config"
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/config"
 	"strconv"
 	"time"
 )

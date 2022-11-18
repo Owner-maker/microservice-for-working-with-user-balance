@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/config"
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/models"
 	"github.com/gin-gonic/gin"
 	"math"
-	"microservice-for-working-with-user-balance/config"
-	"microservice-for-working-with-user-balance/models"
 	"net/http"
 	"time"
 )

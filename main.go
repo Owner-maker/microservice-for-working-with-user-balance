@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/config"
+	"github.com/Owner-maker/microservice-for-working-with-user-balance/routes"
 	"github.com/gin-gonic/gin"
-	"microservice-for-working-with-user-balance/config"
-	"microservice-for-working-with-user-balance/routes"
 
+	_ "github.com/Owner-maker/microservice-for-working-with-user-balance/docs"
 	_ "github.com/swaggo/files"
 	_ "github.com/swaggo/gin-swagger"
 )
@@ -15,6 +16,9 @@ import (
 
 // @host localhost:8080
 // @basePath /
+
+// @contact.name Artem Lisitsyn
+// @contact.email artem.lisitsynn@gmail.com
 
 func main() {
 	route := gin.Default()
