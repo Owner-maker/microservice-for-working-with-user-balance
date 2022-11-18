@@ -18,7 +18,571 @@ const docTemplate = `{
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
-    "paths": {}
+    "paths": {
+        "/services/report": {
+            "get": {
+                "description": "Method allows to generate new scv file on server of all sold services with its total sum via the information of Year and Month; returns link to reposrt's info (json)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "UpdateServicesReport",
+                "operationId": "update-service-sreport",
+                "parameters": [
+                    {
+                        "description": "Information to generate new scv report",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/utils.GetServicesInfoInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UpdateServicesReportOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/static/services": {
+            "get": {
+                "description": "Method allows to get information about all sold services from the generated scv file",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "GetServicesReport",
+                "operationId": "get-services-report",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GetServicesReportOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/balance": {
+            "get": {
+                "description": "Method allows you to get user's balance value via id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "GetUserBalance",
+                "operationId": "get-users-balance",
+                "parameters": [
+                    {
+                        "description": "User's balance info",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GetUserBalanceInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.BalanceInfoOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/balance/topup": {
+            "patch": {
+                "description": "Method allows you to top up user's balance value via id and create transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "UpdateUserBalance",
+                "operationId": "update-user-balance",
+                "parameters": [
+                    {
+                        "description": "Info to top up user's balance",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UpdateUserBalanceInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.BalanceInfoOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/buy/service": {
+            "post": {
+                "description": "Method allows to create an user's order of the needed service and make a transaction with information about reserved money",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "CreateOrder",
+                "operationId": "create-order",
+                "parameters": [
+                    {
+                        "description": "Info to reserve money for order",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ReserveMoneyForServiceInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.CreateOrderOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/cancel/service": {
+            "patch": {
+                "description": "Method allows to cancel the order and return debited money to the user's account and make a transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "CancelService",
+                "operationId": "cancel-service",
+                "parameters": [
+                    {
+                        "description": "Info to cancel the order",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.HandleServiceInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/perform/service": {
+            "patch": {
+                "description": "Method allows to сomplete the order of bought service and confirm the transaction",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "PerformService",
+                "operationId": "perform-service",
+                "parameters": [
+                    {
+                        "description": "Info to reserve money for order",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.HandleServiceInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/transactions": {
+            "get": {
+                "description": "Method allows to get user's transactions info using the pagination, it allows to order transactions by date, money and other transaction's attributes. Limit - maximum of needed transactions, Page - the offset with limit, Sort - value to sort by:date: \"timestamp asc\" or money: \"money_value asc\" (also \"desc\" is available)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "transactions"
+                ],
+                "summary": "GetPaginatedUsersTransactions",
+                "operationId": "get-paginated-users-transactions",
+                "parameters": [
+                    {
+                        "description": "Information to get transactions",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserTransactionsInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.GetPaginatedUsersTransactionsOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/transfer": {
+            "patch": {
+                "description": "Method allows you to sen money to another user",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "AccomplishUsersTransfer",
+                "operationId": "accomplish-users-transfer",
+                "parameters": [
+                    {
+                        "description": "Info to send money to user",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.UserTransferInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.BalanceInfoOutput"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ErrorOutput"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controllers.BalanceInfoOutput": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.CreateOrderOutput": {
+            "type": "object",
+            "properties": {
+                "balance": {
+                    "type": "integer"
+                },
+                "order_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.ErrorOutput": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.GetPaginatedUsersTransactionsOutput": {
+            "type": "object",
+            "properties": {
+                "transactions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/utils.UserFormattedTransaction"
+                    }
+                }
+            }
+        },
+        "controllers.GetServicesReportOutput": {
+            "type": "object",
+            "properties": {
+                "report": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/utils.ServiceInfo"
+                    }
+                }
+            }
+        },
+        "controllers.GetUserBalanceInput": {
+            "type": "object",
+            "required": [
+                "id"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.HandleServiceInput": {
+            "type": "object",
+            "required": [
+                "order_id",
+                "service_id",
+                "user_id"
+            ],
+            "properties": {
+                "order_id": {
+                    "type": "integer"
+                },
+                "service_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.ReserveMoneyForServiceInput": {
+            "type": "object",
+            "required": [
+                "price",
+                "service_id",
+                "user_id"
+            ],
+            "properties": {
+                "price": {
+                    "type": "integer"
+                },
+                "service_id": {
+                    "type": "integer"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.UpdateServicesReportOutput": {
+            "type": "object",
+            "properties": {
+                "report": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.UpdateUserBalanceInput": {
+            "type": "object",
+            "required": [
+                "id",
+                "value"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.UserTransactionsInput": {
+            "type": "object",
+            "required": [
+                "limit",
+                "page",
+                "sort",
+                "user_id"
+            ],
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                },
+                "sort": {
+                    "type": "string"
+                },
+                "user_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.UserTransferInput": {
+            "type": "object",
+            "required": [
+                "user_getter_id",
+                "user_sender_id",
+                "value"
+            ],
+            "properties": {
+                "user_getter_id": {
+                    "type": "integer"
+                },
+                "user_sender_id": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "utils.GetServicesInfoInput": {
+            "type": "object",
+            "required": [
+                "month",
+                "year"
+            ],
+            "properties": {
+                "month": {
+                    "type": "integer"
+                },
+                "year": {
+                    "type": "integer"
+                }
+            }
+        },
+        "utils.ServiceInfo": {
+            "type": "object",
+            "properties": {
+                "serviceID": {
+                    "type": "integer"
+                },
+                "sum": {
+                    "type": "integer"
+                }
+            }
+        },
+        "utils.UserFormattedTransaction": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "incoming_balance": {
+                    "type": "integer"
+                },
+                "money_value": {
+                    "type": "integer"
+                },
+                "outgoing_balance": {
+                    "type": "integer"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        }
+    }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it

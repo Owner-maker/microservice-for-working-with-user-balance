@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+type CreateOrderOutput struct {
+	OrderID uint `json:"order_id"`
+	Balance uint `json:"balance"`
+}
+
 type ReserveMoneyForServiceInput struct {
 	UserID    uint `json:"user_id" binding:"required"`
 	ServiceID uint `json:"service_id" binding:"required"`
@@ -20,6 +25,16 @@ type HandleServiceInput struct {
 	OrderID   uint `json:"order_id" binding:"required"`
 }
 
+// @Summary CreateOrder
+// @Description Method allows to create an user's order of the needed service and make a transaction with information about reserved money
+// @ID create-order
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param input body ReserveMoneyForServiceInput true "Info to reserve money for order"
+// @Success 200 {object} CreateOrderOutput
+// @Failure 400 {object} ErrorOutput
+// @Router /user/buy/service [post]
 func CreateOrder(context *gin.Context) {
 	var input ReserveMoneyForServiceInput
 	var balance models.Balance
@@ -50,6 +65,16 @@ func CreateOrder(context *gin.Context) {
 	context.JSON(http.StatusOK, gin.H{"order_id": order.ID, "balance": balance.Value})
 }
 
+// @Summary PerformService
+// @Description Method allows to сomplete the order of bought service and confirm the transaction
+// @ID perform-service
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param input body HandleServiceInput true "Info to reserve money for order"
+// @Success 200
+// @Failure 400 {object} ErrorOutput
+// @Router /user/perform/service [patch]
 func PerformService(context *gin.Context) {
 	var input HandleServiceInput
 	var order models.Order
@@ -78,6 +103,17 @@ func PerformService(context *gin.Context) {
 	config.DB.Model(&order).Update(&order)
 	context.Status(200)
 }
+
+// @Summary CancelService
+// @Description Method allows to cancel the order and return debited money to the user's account and make a transaction
+// @ID cancel-service
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param input body HandleServiceInput true "Info to cancel the order"
+// @Success 200
+// @Failure 400 {object} ErrorOutput
+// @Router /user/cancel/service [patch]
 func CancelService(context *gin.Context) {
 	var input HandleServiceInput
 	var order models.Order

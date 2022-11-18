@@ -1,4 +1,143 @@
 basePath: /
+definitions:
+  controllers.BalanceInfoOutput:
+    properties:
+      balance:
+        type: integer
+    type: object
+  controllers.CreateOrderOutput:
+    properties:
+      balance:
+        type: integer
+      order_id:
+        type: integer
+    type: object
+  controllers.ErrorOutput:
+    properties:
+      error:
+        type: string
+    type: object
+  controllers.GetPaginatedUsersTransactionsOutput:
+    properties:
+      transactions:
+        items:
+          $ref: '#/definitions/utils.UserFormattedTransaction'
+        type: array
+    type: object
+  controllers.GetServicesReportOutput:
+    properties:
+      report:
+        items:
+          $ref: '#/definitions/utils.ServiceInfo'
+        type: array
+    type: object
+  controllers.GetUserBalanceInput:
+    properties:
+      id:
+        type: integer
+    required:
+    - id
+    type: object
+  controllers.HandleServiceInput:
+    properties:
+      order_id:
+        type: integer
+      service_id:
+        type: integer
+      user_id:
+        type: integer
+    required:
+    - order_id
+    - service_id
+    - user_id
+    type: object
+  controllers.ReserveMoneyForServiceInput:
+    properties:
+      price:
+        type: integer
+      service_id:
+        type: integer
+      user_id:
+        type: integer
+    required:
+    - price
+    - service_id
+    - user_id
+    type: object
+  controllers.UpdateServicesReportOutput:
+    properties:
+      report:
+        type: string
+    type: object
+  controllers.UpdateUserBalanceInput:
+    properties:
+      id:
+        type: integer
+      value:
+        type: integer
+    required:
+    - id
+    - value
+    type: object
+  controllers.UserTransactionsInput:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      sort:
+        type: string
+      user_id:
+        type: integer
+    required:
+    - limit
+    - page
+    - sort
+    - user_id
+    type: object
+  controllers.UserTransferInput:
+    properties:
+      user_getter_id:
+        type: integer
+      user_sender_id:
+        type: integer
+      value:
+        type: integer
+    required:
+    - user_getter_id
+    - user_sender_id
+    - value
+    type: object
+  utils.GetServicesInfoInput:
+    properties:
+      month:
+        type: integer
+      year:
+        type: integer
+    required:
+    - month
+    - year
+    type: object
+  utils.ServiceInfo:
+    properties:
+      serviceID:
+        type: integer
+      sum:
+        type: integer
+    type: object
+  utils.UserFormattedTransaction:
+    properties:
+      description:
+        type: string
+      incoming_balance:
+        type: integer
+      money_value:
+        type: integer
+      outgoing_balance:
+        type: integer
+      timestamp:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact:
@@ -9,5 +148,248 @@ info:
     funds from user to user, as well as a method for obtaining a user's balance).
   title: Balance Managing service
   version: "1.0"
-paths: {}
+paths:
+  /services/report:
+    get:
+      consumes:
+      - application/json
+      description: Method allows to generate new scv file on server of all sold services
+        with its total sum via the information of Year and Month; returns link to
+        reposrt's info (json)
+      operationId: update-service-sreport
+      parameters:
+      - description: Information to generate new scv report
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/utils.GetServicesInfoInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.UpdateServicesReportOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: UpdateServicesReport
+      tags:
+      - transactions
+  /static/services:
+    get:
+      consumes:
+      - application/json
+      description: Method allows to get information about all sold services from the
+        generated scv file
+      operationId: get-services-report
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetServicesReportOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: GetServicesReport
+      tags:
+      - transactions
+  /user/balance:
+    get:
+      consumes:
+      - application/json
+      description: Method allows you to get user's balance value via id
+      operationId: get-users-balance
+      parameters:
+      - description: User's balance info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.GetUserBalanceInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.BalanceInfoOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: GetUserBalance
+      tags:
+      - users
+  /user/balance/topup:
+    patch:
+      consumes:
+      - application/json
+      description: Method allows you to top up user's balance value via id and create
+        transaction
+      operationId: update-user-balance
+      parameters:
+      - description: Info to top up user's balance
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UpdateUserBalanceInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.BalanceInfoOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: UpdateUserBalance
+      tags:
+      - users
+  /user/buy/service:
+    post:
+      consumes:
+      - application/json
+      description: Method allows to create an user's order of the needed service and
+        make a transaction with information about reserved money
+      operationId: create-order
+      parameters:
+      - description: Info to reserve money for order
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ReserveMoneyForServiceInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.CreateOrderOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: CreateOrder
+      tags:
+      - users
+  /user/cancel/service:
+    patch:
+      consumes:
+      - application/json
+      description: Method allows to cancel the order and return debited money to the
+        user's account and make a transaction
+      operationId: cancel-service
+      parameters:
+      - description: Info to cancel the order
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.HandleServiceInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: CancelService
+      tags:
+      - users
+  /user/perform/service:
+    patch:
+      consumes:
+      - application/json
+      description: Method allows to сomplete the order of bought service and confirm
+        the transaction
+      operationId: perform-service
+      parameters:
+      - description: Info to reserve money for order
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.HandleServiceInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: PerformService
+      tags:
+      - users
+  /user/transactions:
+    get:
+      consumes:
+      - application/json
+      description: 'Method allows to get user''s transactions info using the pagination,
+        it allows to order transactions by date, money and other transaction''s attributes.
+        Limit - maximum of needed transactions, Page - the offset with limit, Sort
+        - value to sort by:date: "timestamp asc" or money: "money_value asc" (also
+        "desc" is available)'
+      operationId: get-paginated-users-transactions
+      parameters:
+      - description: Information to get transactions
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UserTransactionsInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.GetPaginatedUsersTransactionsOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: GetPaginatedUsersTransactions
+      tags:
+      - transactions
+  /users/transfer:
+    patch:
+      consumes:
+      - application/json
+      description: Method allows you to sen money to another user
+      operationId: accomplish-users-transfer
+      parameters:
+      - description: Info to send money to user
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.UserTransferInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.BalanceInfoOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.ErrorOutput'
+      summary: AccomplishUsersTransfer
+      tags:
+      - users
 swagger: "2.0"

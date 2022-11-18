@@ -9,6 +9,24 @@ import (
 	"os"
 )
 
+type UpdateServicesReportOutput struct {
+	Report string `json:"report"`
+}
+
+type GetServicesReportOutput struct {
+	Report []utils.ServiceInfo `json:"report"`
+}
+
+// @Summary UpdateServicesReport
+// @Description Method allows to generate new scv file on server of all sold services with its total sum via the information of Year and Month; returns link to reposrt's info (json)
+// @ID update-service-sreport
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param input body utils.GetServicesInfoInput true "Information to generate new scv report"
+// @Success 200 {object} UpdateServicesReportOutput
+// @Failure 400 {object} ErrorOutput
+// @Router /services/report [get]
 func UpdateServicesReport(context *gin.Context) {
 	var input utils.GetServicesInfoInput
 	if err := context.ShouldBindJSON(&input); err != nil {
@@ -27,9 +45,18 @@ func UpdateServicesReport(context *gin.Context) {
 		return
 	}
 	fmt.Println(context.Request.Host)
-	context.JSON(http.StatusOK, gin.H{"report": fmt.Sprintf("http://%s/static/services", context.Request.Host)})
+	context.JSON(http.StatusOK, UpdateServicesReportOutput{Report: fmt.Sprintf("http://%s/static/services", context.Request.Host)})
 }
 
+// @Summary GetServicesReport
+// @Description Method allows to get information about all sold services from the generated scv file
+// @ID get-services-report
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Success 200 {object} GetServicesReportOutput
+// @Failure 400 {object} ErrorOutput
+// @Router /static/services [get]
 func GetServicesReport(context *gin.Context) {
 	var serviceInfo []utils.ServiceInfo
 	servicesFile, err := os.OpenFile("./static/services.csv", os.O_RDWR|os.O_CREATE, os.ModePerm)
@@ -44,5 +71,5 @@ func GetServicesReport(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "failed to provide report"})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"report": serviceInfo})
+	context.JSON(http.StatusOK, GetServicesReportOutput{Report: serviceInfo})
 }

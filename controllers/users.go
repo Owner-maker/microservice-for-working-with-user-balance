@@ -13,6 +13,10 @@ import (
 	_ "github.com/swaggo/gin-swagger"
 )
 
+type ErrorOutput struct {
+	Error string `json:"error"`
+}
+
 type BalanceInfoOutput struct {
 	Balance uint `json:"balance"`
 }
@@ -64,14 +68,14 @@ func GetUser(context *gin.Context) {
 
 // @Summary GetUserBalance
 // @Description Method allows you to get user's balance value via id
+// @ID get-users-balance
 // @Tags users
 // @Accept json
 // @Produce json
 // @Param input body GetUserBalanceInput true "User's balance info"
-// @Success {object} BalanceInfoOutput
-// @Failure default {object} gin.H
+// @Success 200 {object} BalanceInfoOutput
+// @Failure 400 {object} ErrorOutput
 // @Router /user/balance [get]
-
 func GetUserBalance(context *gin.Context) {
 	var user models.User
 	var balance models.Balance
@@ -88,9 +92,19 @@ func GetUserBalance(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "user has not a balance yet"})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"balance": balance.Value})
+	context.JSON(http.StatusOK, BalanceInfoOutput{Balance: balance.Value})
 }
 
+// @Summary UpdateUserBalance
+// @Description Method allows you to top up user's balance value via id and create transaction
+// @ID update-user-balance
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param input body UpdateUserBalanceInput true "Info to top up user's balance"
+// @Success 200 {object} BalanceInfoOutput
+// @Failure 400 {object} ErrorOutput
+// @Router /user/balance/topup [patch]
 func UpdateUserBalance(context *gin.Context) {
 	var input UpdateUserBalanceInput
 	var balance models.Balance
@@ -114,9 +128,19 @@ func UpdateUserBalance(context *gin.Context) {
 	config.DB.Where("user_id = ?", input.ID).First(&balance)
 	balance.Value += uint(input.Value)
 	config.DB.Model(&balance).Update(&balance)
-	context.JSON(http.StatusOK, gin.H{"balance": balance.Value})
+	context.JSON(http.StatusOK, BalanceInfoOutput{Balance: balance.Value})
 }
 
+// @Summary AccomplishUsersTransfer
+// @Description Method allows you to sen money to another user
+// @ID accomplish-users-transfer
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param input body UserTransferInput true "Info to send money to user"
+// @Success 200 {object} BalanceInfoOutput
+// @Failure 400 {object} ErrorOutput
+// @Router /users/transfer [patch]
 func AccomplishUsersTransfer(context *gin.Context) {
 	var input UserTransferInput
 	var userSender models.User
@@ -146,7 +170,7 @@ func AccomplishUsersTransfer(context *gin.Context) {
 
 	CreateUserTransferTransaction(userSender.Balance, userGetter.ID, -int(input.Value))
 	CreateUserTransferTransaction(userGetter.Balance, userSender.ID, int(input.Value))
-	context.JSON(http.StatusOK, gin.H{"balance_user_sender": userSender.Balance.Value})
+	context.JSON(http.StatusOK, BalanceInfoOutput{Balance: userSender.Balance.Value})
 }
 
 func CreateSelfIncomeTransaction(updateInput UpdateUserBalanceInput) {
