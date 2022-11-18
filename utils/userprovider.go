@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"userBalanceServicegot/config"
-	"userBalanceServicegot/models"
+	"microservice-for-working-with-user-balance/config"
+	"microservice-for-working-with-user-balance/models"
 )
 
 func GetUser(userID uint) models.User {

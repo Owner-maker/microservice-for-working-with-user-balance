@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"microservice-for-working-with-user-balance/config"
+	"microservice-for-working-with-user-balance/utils"
 	"net/http"
-	"userBalanceServicegot/config"
-	"userBalanceServicegot/utils"
 )
 
 type UserTransactionsInput struct {

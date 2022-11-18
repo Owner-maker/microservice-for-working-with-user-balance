@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"userBalanceServicegot/models"
+	"microservice-for-working-with-user-balance/models"
 )
 
 var DB *gorm.DB

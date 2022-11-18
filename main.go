@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"userBalanceServicegot/config"
-	"userBalanceServicegot/routes"
+	"microservice-for-working-with-user-balance/config"
+	"microservice-for-working-with-user-balance/routes"
 
 	_ "github.com/swaggo/files"
 	_ "github.com/swaggo/gin-swagger"

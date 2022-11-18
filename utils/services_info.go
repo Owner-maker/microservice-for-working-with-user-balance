@@ -2,9 +2,9 @@ package utils
 
 import (
 	"github.com/gocarina/gocsv"
+	"microservice-for-working-with-user-balance/config"
 	"os"
 	"strconv"
-	"userBalanceServicegot/config"
 )
 
 type GetServicesInfoInput struct {

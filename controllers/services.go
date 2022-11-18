@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"microservice-for-working-with-user-balance/config"
+	"microservice-for-working-with-user-balance/models"
 	"net/http"
 	"time"
-	"userBalanceServicegot/config"
-	"userBalanceServicegot/models"
 )
 
 type ReserveMoneyForServiceInput struct {

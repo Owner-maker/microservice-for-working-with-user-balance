@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gocarina/gocsv"
+	"microservice-for-working-with-user-balance/utils"
 	"net/http"
 	"os"
-	"userBalanceServicegot/utils"
 )
 
 func UpdateServicesReport(context *gin.Context) {

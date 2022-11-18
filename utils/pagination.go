@@ -2,9 +2,9 @@ package utils
 
 import (
 	"fmt"
+	"microservice-for-working-with-user-balance/config"
 	"strconv"
 	"time"
-	"userBalanceServicegot/config"
 )
 
 const (

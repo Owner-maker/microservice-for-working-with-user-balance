@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"userBalanceServicegot/controllers"
+	"microservice-for-working-with-user-balance/controllers"
 )
 
 func CreateEndpoints(route *gin.Engine) {

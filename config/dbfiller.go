@@ -1,7 +1,7 @@
 package config
 
 import (
-	"userBalanceServicegot/models"
+	"microservice-for-working-with-user-balance/models"
 )
 
 func FillDbWithData() {
