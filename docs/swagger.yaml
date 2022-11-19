@@ -150,7 +150,7 @@ info:
   version: "1.0"
 paths:
   /services/report:
-    get:
+    post:
       consumes:
       - application/json
       description: Method allows to generate new scv file on server of all sold services
@@ -179,7 +179,7 @@ paths:
       tags:
       - transactions
   /static/services:
-    get:
+    post:
       consumes:
       - application/json
       description: Method allows to get information about all sold services from the
@@ -200,7 +200,7 @@ paths:
       tags:
       - transactions
   /user/balance:
-    get:
+    post:
       consumes:
       - application/json
       description: Method allows you to get user's balance value via id
@@ -283,7 +283,7 @@ paths:
       tags:
       - users
   /user/cancel/service:
-    patch:
+    delete:
       consumes:
       - application/json
       description: Method allows to cancel the order and return debited money to the
@@ -335,7 +335,7 @@ paths:
       tags:
       - users
   /user/transactions:
-    get:
+    post:
       consumes:
       - application/json
       description: 'Method allows to get user''s transactions info using the pagination,

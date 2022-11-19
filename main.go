@@ -2,10 +2,9 @@ package main
 
 import (
 	"github.com/Owner-maker/microservice-for-working-with-user-balance/config"
+	_ "github.com/Owner-maker/microservice-for-working-with-user-balance/docs"
 	"github.com/Owner-maker/microservice-for-working-with-user-balance/routes"
 	"github.com/gin-gonic/gin"
-
-	_ "github.com/Owner-maker/microservice-for-working-with-user-balance/docs"
 	_ "github.com/swaggo/files"
 	_ "github.com/swaggo/gin-swagger"
 )

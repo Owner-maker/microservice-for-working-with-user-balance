@@ -8,15 +8,15 @@ import (
 )
 
 func CreateEndpoints(route *gin.Engine) {
-	route.GET("/user", controllers.GetUser)
-	route.GET("/user/balance", controllers.GetUserBalance)
+	route.POST("/user", controllers.GetUser)
+	route.POST("/user/balance", controllers.GetUserBalance)
 	route.PATCH("/user/balance/topup", controllers.UpdateUserBalance)
 	route.PATCH("/users/transfer", controllers.AccomplishUsersTransfer)
 	route.POST("/user/buy/service", controllers.CreateOrder)
 	route.PATCH("/user/perform/service", controllers.PerformService)
-	route.PATCH("/user/cancel/service", controllers.CancelService)
-	route.GET("/user/transactions", controllers.GetPaginatedUsersTransactions)
-	route.GET("/services/report", controllers.UpdateServicesReport)
-	route.GET("/static/services", controllers.GetServicesReport)
+	route.DELETE("/user/cancel/service", controllers.CancelService)
+	route.POST("/user/transactions", controllers.GetPaginatedUsersTransactions)
+	route.POST("/services/report", controllers.UpdateServicesReport)
+	route.POST("/static/services", controllers.GetServicesReport)
 	route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

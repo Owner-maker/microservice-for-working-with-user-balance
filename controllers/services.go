@@ -113,7 +113,7 @@ func PerformService(context *gin.Context) {
 // @Param input body HandleServiceInput true "Info to cancel the order"
 // @Success 200
 // @Failure 400 {object} ErrorOutput
-// @Router /user/cancel/service [patch]
+// @Router /user/cancel/service [delete]
 func CancelService(context *gin.Context) {
 	var input HandleServiceInput
 	var order models.Order

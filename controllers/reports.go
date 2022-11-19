@@ -26,7 +26,7 @@ type GetServicesReportOutput struct {
 // @Param input body utils.GetServicesInfoInput true "Information to generate new scv report"
 // @Success 200 {object} UpdateServicesReportOutput
 // @Failure 400 {object} ErrorOutput
-// @Router /services/report [get]
+// @Router /services/report [post]
 func UpdateServicesReport(context *gin.Context) {
 	var input utils.GetServicesInfoInput
 	if err := context.ShouldBindJSON(&input); err != nil {
@@ -56,7 +56,7 @@ func UpdateServicesReport(context *gin.Context) {
 // @Produce json
 // @Success 200 {object} GetServicesReportOutput
 // @Failure 400 {object} ErrorOutput
-// @Router /static/services [get]
+// @Router /static/services [post]
 func GetServicesReport(context *gin.Context) {
 	var serviceInfo []utils.ServiceInfo
 	servicesFile, err := os.OpenFile("./static/services.csv", os.O_RDWR|os.O_CREATE, os.ModePerm)

@@ -20,7 +20,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/services/report": {
-            "get": {
+            "post": {
                 "description": "Method allows to generate new scv file on server of all sold services with its total sum via the information of Year and Month; returns link to reposrt's info (json)",
                 "consumes": [
                     "application/json"
@@ -61,7 +61,7 @@ const docTemplate = `{
             }
         },
         "/static/services": {
-            "get": {
+            "post": {
                 "description": "Method allows to get information about all sold services from the generated scv file",
                 "consumes": [
                     "application/json"
@@ -91,7 +91,7 @@ const docTemplate = `{
             }
         },
         "/user/balance": {
-            "get": {
+            "post": {
                 "description": "Method allows you to get user's balance value via id",
                 "consumes": [
                     "application/json"
@@ -214,7 +214,7 @@ const docTemplate = `{
             }
         },
         "/user/cancel/service": {
-            "patch": {
+            "delete": {
                 "description": "Method allows to cancel the order and return debited money to the user's account and make a transaction",
                 "consumes": [
                     "application/json"
@@ -290,7 +290,7 @@ const docTemplate = `{
             }
         },
         "/user/transactions": {
-            "get": {
+            "post": {
                 "description": "Method allows to get user's transactions info using the pagination, it allows to order transactions by date, money and other transaction's attributes. Limit - maximum of needed transactions, Page - the offset with limit, Sort - value to sort by:date: \"timestamp asc\" or money: \"money_value asc\" (also \"desc\" is available)",
                 "consumes": [
                     "application/json"

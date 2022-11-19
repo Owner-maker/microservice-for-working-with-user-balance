@@ -75,7 +75,7 @@ func GetUser(context *gin.Context) {
 // @Param input body GetUserBalanceInput true "User's balance info"
 // @Success 200 {object} BalanceInfoOutput
 // @Failure 400 {object} ErrorOutput
-// @Router /user/balance [get]
+// @Router /user/balance [post]
 func GetUserBalance(context *gin.Context) {
 	var user models.User
 	var balance models.Balance

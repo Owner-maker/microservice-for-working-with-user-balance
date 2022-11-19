@@ -27,7 +27,7 @@ type UserTransactionsInput struct {
 // @Param input body UserTransactionsInput true "Information to get transactions"
 // @Success 200 {object} GetPaginatedUsersTransactionsOutput
 // @Failure 400 {object} ErrorOutput
-// @Router /user/transactions [get]
+// @Router /user/transactions [post]
 func GetPaginatedUsersTransactions(context *gin.Context) {
 	var input UserTransactionsInput
 	if err := context.ShouldBindJSON(&input); err != nil {
