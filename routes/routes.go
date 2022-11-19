@@ -17,6 +17,6 @@ func CreateEndpoints(route *gin.Engine) {
 	route.DELETE("/user/cancel/service", controllers.CancelService)
 	route.POST("/user/transactions", controllers.GetPaginatedUsersTransactions)
 	route.POST("/services/report", controllers.UpdateServicesReport)
-	route.POST("/static/services", controllers.GetServicesReport)
+	route.GET("/static/services", controllers.GetServicesReport)
 	route.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

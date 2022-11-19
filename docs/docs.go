@@ -61,7 +61,7 @@ const docTemplate = `{
             }
         },
         "/static/services": {
-            "post": {
+            "get": {
                 "description": "Method allows to get information about all sold services from the generated scv file",
                 "consumes": [
                     "application/json"

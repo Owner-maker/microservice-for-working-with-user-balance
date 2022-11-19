@@ -179,7 +179,7 @@ paths:
       tags:
       - transactions
   /static/services:
-    post:
+    get:
       consumes:
       - application/json
       description: Method allows to get information about all sold services from the

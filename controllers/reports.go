@@ -56,7 +56,7 @@ func UpdateServicesReport(context *gin.Context) {
 // @Produce json
 // @Success 200 {object} GetServicesReportOutput
 // @Failure 400 {object} ErrorOutput
-// @Router /static/services [post]
+// @Router /static/services [get]
 func GetServicesReport(context *gin.Context) {
 	var serviceInfo []utils.ServiceInfo
 	servicesFile, err := os.OpenFile("./static/services.csv", os.O_RDWR|os.O_CREATE, os.ModePerm)
