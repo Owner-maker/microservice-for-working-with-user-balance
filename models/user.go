@@ -7,5 +7,5 @@ type User struct {
 	SelfIncomes   []SelfIncome    `gorm:"foreignKey:UserID; references:ID;"`
 	UsersTransfer []UsersTransfer `gorm:"foreignKey:UserID; references:ID;"`
 	Orders        []Order         `gorm:"foreignKey:UserID; references:ID;"`
-	Balance       Balance
+	Balance       Balance         `gorm:"foreignKey:UserID; references:ID;"`
 }

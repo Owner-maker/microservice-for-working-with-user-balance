@@ -26,7 +26,7 @@ type HandleServiceInput struct {
 }
 
 // @Summary CreateOrder
-// @Description Method allows to create an user's order of the needed service and make a transaction with information about reserved money
+// @Description Method allows to create an user's order of the needed service and make a transaction with information about reserved money. Method returns order id which is needed to be saved in order to perform this service or calncel in future.
 // @ID create-order
 // @Tags users
 // @Accept json
@@ -42,12 +42,11 @@ func CreateOrder(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	if err := config.DB.Where("id = ?", input.UserID).Error; err != nil {
+	if err := config.DB.Where("id = ?", input.UserID).First(&balance).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such user"})
 		return
 	}
-	config.DB.Where("user_id = ?", input.UserID).First(&balance)
-	if balance.Value-input.Price < 0 {
+	if int(balance.Value)-int(input.Price) < 0 {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "User does not have enough money to buy the service"})
 		return
 	}
@@ -57,6 +56,7 @@ func CreateOrder(context *gin.Context) {
 		IncomingBalance: balance.Value,
 		OutgoingBalance: balance.Value - input.Price,
 		Price:           input.Price,
+		Timestamp:       time.Now(),
 	}
 
 	balance.Value -= input.Price
@@ -71,7 +71,7 @@ func CreateOrder(context *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param input body HandleServiceInput true "Info to reserve money for order"
+// @Param input body HandleServiceInput true "Info to reserve money for order. Need an order id."
 // @Success 200
 // @Failure 400 {object} ErrorOutput
 // @Router /user/perform/service [patch]
@@ -98,6 +98,10 @@ func PerformService(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "order was already completed"})
 		return
 	}
+	if order.IsCompleted == false && order.OutgoingBalance > order.IncomingBalance {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "order was already canceled"})
+		return
+	}
 	order.Timestamp = time.Now()
 	order.IsCompleted = true
 	config.DB.Model(&order).Update(&order)
@@ -110,7 +114,7 @@ func PerformService(context *gin.Context) {
 // @Tags users
 // @Accept json
 // @Produce json
-// @Param input body HandleServiceInput true "Info to cancel the order"
+// @Param input body HandleServiceInput true "Info to cancel the order. Need an order id."
 // @Success 200
 // @Failure 400 {object} ErrorOutput
 // @Router /user/cancel/service [delete]
@@ -132,6 +136,14 @@ func CancelService(context *gin.Context) {
 	}
 	if input.ServiceID != order.ServiceID {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "there is no such service id with this order id"})
+		return
+	}
+	if order.IsCompleted == true {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "order was already completed"})
+		return
+	}
+	if order.IsCompleted == false && order.OutgoingBalance > order.IncomingBalance {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "order was already canceled"})
 		return
 	}
 	config.DB.Where("user_id = ?", input.UserID).First(&balance)

@@ -174,7 +174,7 @@ const docTemplate = `{
         },
         "/user/buy/service": {
             "post": {
-                "description": "Method allows to create an user's order of the needed service and make a transaction with information about reserved money",
+                "description": "Method allows to create an user's order of the needed service and make a transaction with information about reserved money. Method returns order id which is needed to be saved in order to perform this service or calncel in future.",
                 "consumes": [
                     "application/json"
                 ],
@@ -229,7 +229,7 @@ const docTemplate = `{
                 "operationId": "cancel-service",
                 "parameters": [
                     {
-                        "description": "Info to cancel the order",
+                        "description": "Info to cancel the order. Need an order id.",
                         "name": "input",
                         "in": "body",
                         "required": true,
@@ -267,7 +267,7 @@ const docTemplate = `{
                 "operationId": "perform-service",
                 "parameters": [
                     {
-                        "description": "Info to reserve money for order",
+                        "description": "Info to reserve money for order. Need an order id.",
                         "name": "input",
                         "in": "body",
                         "required": true,

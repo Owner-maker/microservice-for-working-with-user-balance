@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"github.com/Owner-maker/microservice-for-working-with-user-balance/config"
 	"github.com/Owner-maker/microservice-for-working-with-user-balance/models"
 	"github.com/gin-gonic/gin"
@@ -40,14 +41,6 @@ type UserTransferInput struct {
 	Value        uint `json:"value" binding:"required"`
 }
 
-func GetUsers(context *gin.Context) {
-	var users []models.User
-	config.DB.Find(&users)
-	config.DB.Preload("SelfIncomes").Find(&users)
-	config.DB.Preload("Orders").Find(&users)
-	context.JSON(http.StatusOK, gin.H{"users": users})
-}
-
 func GetUser(context *gin.Context) {
 	var user models.User
 	var input GetUserInput
@@ -62,7 +55,6 @@ func GetUser(context *gin.Context) {
 	config.DB.Preload("SelfIncomes").Find(&user)
 	config.DB.Preload("Orders").Find(&user)
 	config.DB.Preload("UsersTransfer").Find(&user)
-	//config.DB.Preload("Balance").Find(&users)
 	context.JSON(http.StatusOK, gin.H{"user": user})
 }
 
@@ -120,7 +112,7 @@ func UpdateUserBalance(context *gin.Context) {
 	if err := config.DB.Where("id = ?", input.ID).First(&user).Error; err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
-	} else {
+	} else if err = config.DB.Where("user_id = ?", input.ID).First(&balance).Error; err != nil {
 		newBalance := models.Balance{UserID: input.ID, Value: 0}
 		config.DB.Create(&newBalance)
 	}
@@ -145,32 +137,41 @@ func AccomplishUsersTransfer(context *gin.Context) {
 	var input UserTransferInput
 	var userSender models.User
 	var userGetter models.User
+	var userGetterBalance models.Balance
+	var userSenderBalance models.Balance
 	if err := context.ShouldBindJSON(&input); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 	if err := config.DB.Where("id = ?", input.UserSenderID).First(&userSender).Error; err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		context.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("there is no such user with id = %d", input.UserSenderID)})
 		return
 	}
 	if err := config.DB.Where("id = ?", input.UserGetterID).First(&userGetter).Error; err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		context.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("there is no such user with id = %d", input.UserGetterID)})
 		return
 	}
-	config.DB.Preload("Balance").Find(&userSender)
-	if userSender.Balance.Value-input.Value < 0 {
+	if err := config.DB.Where("user_id = ?", userSender.ID).First(&userSenderBalance).Error; err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("user with id = %d has not a balance yet", userSender.ID)})
+		return
+	}
+	if err := config.DB.Where("user_id = ?", userGetter.ID).First(&userGetterBalance).Error; err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": fmt.Sprintf("user with id = %d has not a balance yet", userGetter.ID)})
+		return
+	}
+	if int(userSenderBalance.Value)-int(input.Value) < 0 {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "User sender does not have enough money to make transfer"})
 		return
 	}
-	config.DB.Preload("Balance").Find(&userGetter)
-	userSender.Balance.Value -= input.Value
-	userGetter.Balance.Value += input.Value
-	config.DB.Model(&userSender.Balance).Update(&userSender.Balance)
-	config.DB.Model(&userGetter.Balance).Update(&userGetter.Balance)
+	CreateUserTransferTransaction(userSenderBalance, userGetter.ID, -int(input.Value))
+	CreateUserTransferTransaction(userGetterBalance, userSender.ID, int(input.Value))
 
-	CreateUserTransferTransaction(userSender.Balance, userGetter.ID, -int(input.Value))
-	CreateUserTransferTransaction(userGetter.Balance, userSender.ID, int(input.Value))
-	context.JSON(http.StatusOK, BalanceInfoOutput{Balance: userSender.Balance.Value})
+	userSenderBalance.Value -= input.Value
+	userGetterBalance.Value += input.Value
+
+	config.DB.Model(&userSenderBalance).Update(&userSenderBalance)
+	config.DB.Model(&userGetterBalance).Update(&userGetterBalance)
+	context.JSON(http.StatusOK, BalanceInfoOutput{Balance: userSenderBalance.Value})
 }
 
 func CreateSelfIncomeTransaction(updateInput UpdateUserBalanceInput) {

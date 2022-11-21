@@ -13,6 +13,7 @@ const (
 	selfIncomeFromUserDescription            string = "replenishment of the balance from the user"
 	paymentOfServiceDescription              string = "payment of service"
 	selfIncomeWhenServiceCanceledDescription string = "replenishment of the balance when canceling the service"
+	reserveMoneyForServiceDescription        string = "reservation of funds from the main balance for registration of the service"
 )
 
 type Pagination struct {
@@ -73,15 +74,16 @@ func GetPaginatedUserTransactions(userID uint, pagination Pagination) (*[]UserFo
 		} else if v.ServiceID != 0 {
 			if v.IsCompleted == true {
 				description = fmt.Sprintf("%s #%s", paymentOfServiceDescription, strconv.Itoa(int(v.ServiceID)))
-			} else if v.OutgoingBalance > v.IncomingBalance {
+			} else if v.IsCompleted == false && v.OutgoingBalance > v.IncomingBalance {
 				description = fmt.Sprintf("%s #%s", selfIncomeWhenServiceCanceledDescription, strconv.Itoa(int(v.ServiceID)))
+			} else if v.IsCompleted == false && v.OutgoingBalance < v.IncomingBalance {
+				description = fmt.Sprintf("%s #%s", reserveMoneyForServiceDescription, strconv.Itoa(int(v.ServiceID)))
 			}
 		} else {
 			description = selfIncomeDescription
 		}
 		currTransaction.Description = description
 		userFormattedTransactions = append(userFormattedTransactions, currTransaction)
-		fmt.Println(userFormattedTransactions)
 	}
 	return &userFormattedTransactions, nil
 }

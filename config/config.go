@@ -41,6 +41,7 @@ func DbURL(dbConfig *DBConfig) string {
 
 func ConnectDB() {
 	DBConfig := BuildDBConfig()
+	fmt.Println(DbURL(DBConfig))
 	db, err := gorm.Open("postgres", DbURL(DBConfig))
 	if err != nil {
 		panic(err.Error())

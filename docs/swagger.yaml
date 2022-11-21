@@ -259,7 +259,9 @@ paths:
       consumes:
       - application/json
       description: Method allows to create an user's order of the needed service and
-        make a transaction with information about reserved money
+        make a transaction with information about reserved money. Method returns order
+        id which is needed to be saved in order to perform this service or calncel
+        in future.
       operationId: create-order
       parameters:
       - description: Info to reserve money for order
@@ -290,7 +292,7 @@ paths:
         user's account and make a transaction
       operationId: cancel-service
       parameters:
-      - description: Info to cancel the order
+      - description: Info to cancel the order. Need an order id.
         in: body
         name: input
         required: true
@@ -316,7 +318,7 @@ paths:
         the transaction
       operationId: perform-service
       parameters:
-      - description: Info to reserve money for order
+      - description: Info to reserve money for order. Need an order id.
         in: body
         name: input
         required: true
